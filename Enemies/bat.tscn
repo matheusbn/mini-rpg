@@ -1,0 +1,199 @@
+[gd_scene load_steps=27 format=3 uid="uid://hs8rf3c3vnbd"]
+
+[ext_resource type="Texture2D" uid="uid://csumoydst2hls" path="res://Enemies/Bat.png" id="1_fcjrn"]
+[ext_resource type="Script" path="res://Enemies/bat.gd" id="1_kpw7d"]
+[ext_resource type="Shader" path="res://Player/white_color.gdshader" id="2_k0b17"]
+[ext_resource type="Texture2D" uid="uid://c47kkj1jfwi0" path="res://Shadows/SmallShadow.png" id="2_ux71w"]
+[ext_resource type="PackedScene" uid="uid://v2t1xs8o5ulb" path="res://Overlap/hurtbox.tscn" id="4_117p7"]
+[ext_resource type="PackedScene" uid="uid://doekcymm262wc" path="res://stats.tscn" id="5_w5joc"]
+[ext_resource type="PackedScene" uid="uid://v0s4xb7a8w8v" path="res://Enemies/player_detection_zone.tscn" id="6_7f0t2"]
+[ext_resource type="PackedScene" uid="uid://d32acktc4pdw4" path="res://Overlap/hitbox.tscn" id="7_pqymo"]
+[ext_resource type="PackedScene" uid="uid://c5rsv1reenp7m" path="res://Overlap/soft_collision.tscn" id="8_on1xg"]
+[ext_resource type="PackedScene" uid="uid://c7gw34rd3spkh" path="res://Enemies/wander_controller.tscn" id="9_c41uw"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_sap82"]
+resource_local_to_scene = true
+shader = ExtResource("2_k0b17")
+shader_parameter/active = false
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_twc3s"]
+atlas = ExtResource("1_fcjrn")
+region = Rect2(0, 0, 16, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rn3py"]
+atlas = ExtResource("1_fcjrn")
+region = Rect2(16, 0, 16, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_h0hfn"]
+atlas = ExtResource("1_fcjrn")
+region = Rect2(32, 0, 16, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tnx8n"]
+atlas = ExtResource("1_fcjrn")
+region = Rect2(48, 0, 16, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tj6t4"]
+atlas = ExtResource("1_fcjrn")
+region = Rect2(64, 0, 16, 24)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_kviaq"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_twc3s")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rn3py")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_h0hfn")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tnx8n")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tj6t4")
+}],
+"loop": true,
+"name": &"Fly",
+"speed": 10.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_8jyei"]
+radius = 4.0
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_5hexb"]
+radius = 8.0
+height = 22.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_p7m7f"]
+radius = 65.123
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_yn3j3"]
+radius = 4.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_3u5hk"]
+radius = 3.0
+
+[sub_resource type="Animation" id="Animation_r0i3g"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AnimatedSprite2D:material:shader_parameter/active")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="Animation" id="Animation_qurlc"]
+resource_name = "Start"
+length = 0.2
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AnimatedSprite2D:material:shader_parameter/active")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+
+[sub_resource type="Animation" id="Animation_brwsu"]
+resource_name = "Stop"
+length = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AnimatedSprite2D:material:shader_parameter/active")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_mb510"]
+_data = {
+"RESET": SubResource("Animation_r0i3g"),
+"Start": SubResource("Animation_qurlc"),
+"Stop": SubResource("Animation_brwsu")
+}
+
+[node name="Bat" type="CharacterBody2D"]
+collision_layer = 0
+script = ExtResource("1_kpw7d")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+material = SubResource("ShaderMaterial_sap82")
+sprite_frames = SubResource("SpriteFrames_kviaq")
+animation = &"Fly"
+autoplay = "Fly"
+offset = Vector2(0, -12)
+
+[node name="ShadowSprite" type="Sprite2D" parent="."]
+texture = ExtResource("2_ux71w")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+visible = false
+shape = SubResource("CircleShape2D_8jyei")
+
+[node name="Hurtbox" parent="." instance=ExtResource("4_117p7")]
+visible = false
+collision_layer = 32
+collision_mask = 4
+
+[node name="CollisionShape2D" parent="Hurtbox" index="0"]
+position = Vector2(0, -11)
+shape = SubResource("CapsuleShape2D_5hexb")
+
+[node name="Stats" parent="." instance=ExtResource("5_w5joc")]
+max_health = 7
+
+[node name="PlayerDetectionZone" parent="." instance=ExtResource("6_7f0t2")]
+visible = false
+
+[node name="CollisionShape2D" parent="PlayerDetectionZone" index="0"]
+shape = SubResource("CircleShape2D_p7m7f")
+
+[node name="Hitbox" parent="." instance=ExtResource("7_pqymo")]
+visible = false
+collision_layer = 16
+collision_mask = 8
+damage = 1
+
+[node name="CollisionShape2D" parent="Hitbox" index="0"]
+position = Vector2(0, -15)
+shape = SubResource("CircleShape2D_yn3j3")
+
+[node name="SoftCollision" parent="." instance=ExtResource("8_on1xg")]
+
+[node name="CollisionShape2D" parent="SoftCollision" index="0"]
+shape = SubResource("CircleShape2D_3u5hk")
+
+[node name="WanderController" parent="." instance=ExtResource("9_c41uw")]
+
+[node name="BlinkAnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_mb510")
+}
+
+[connection signal="area_entered" from="Hurtbox" to="." method="_on_hurtbox_area_entered"]
+[connection signal="invincibility_ended" from="Hurtbox" to="." method="_on_hurtbox_invincibility_ended"]
+[connection signal="invincibility_started" from="Hurtbox" to="." method="_on_hurtbox_invincibility_started"]
+[connection signal="no_health" from="Stats" to="." method="_on_stats_no_health"]
+
+[editable path="Hurtbox"]
+[editable path="PlayerDetectionZone"]
+[editable path="Hitbox"]
+[editable path="SoftCollision"]
